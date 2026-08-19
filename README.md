@@ -1,30 +1,61 @@
-# Maru Browser Extensions
+# 🌐 Maru Browser Extensions
 
-Monorepo containing all browser extensions for the Maru ecosystem.
+> *"You browse the web so much, Senpai... so I made sure you have the best in-browser tools to back you up! Don't forget to thank me!"* — **Nanami 💚**
 
-## Extensions
+Welcome to the **Maru Browser Extensions Monorepo**! Here you'll find all the **Manifest V3** web extensions that integrate directly into Chrome, Edge, and Firefox to extend your browsing experience across Messenger, video streaming sites, and router dashboards.
 
-- **`extensions/translate`**: **Messenger Translate** — Real-time English/Japanese translation overlay for Messenger and Facebook Messages.
-- **`extensions/movieplay`**: **MoviePlay Extension** — Video streaming helper with player launch integration and stream relay.
-- **`extensions/wlman`**: **Wireless Management Extension** — Router management and monitoring companion (DITO / ZTE CPE / Tozed ZLT).
+---
 
-## Building
+## 🧩 Extensions in this Monorepo
 
-To build all extensions:
+### 💬 [`extensions/translate`](./extensions/translate) — *Messenger Translate*
+*Real-time Japanese/English overlay for Facebook Messenger & Facebook Messages!*
+
+Browsing Messenger chats with international friends? This extension automatically translates everything seamlessly in-place:
+- 🌸 **Live Japanese Preview**: Types a live Japanese translation strip above your input box as you type, and auto-translates on send.
+- 🏷️ **Incoming Badges**: Detects incoming non-English messages and appends a clean English translation badge right beneath the bubble.
+- ⚙️ **Custom Providers**: Supports MyMemory, OpenAI, and custom translation endpoints.
+
+### 🎬 [`extensions/movieplay`](./extensions/movieplay) — *MoviePlay Companion Extension*
+*Seamless video player launcher & stream catcher for streaming websites!*
+
+Enhances web video players by letting you beam streams directly into your favorite desktop player:
+- 🚀 **1-Click VLC / MPV Launch**: Opens the currently playing web stream in VLC or MPV with hardware acceleration.
+- 🧲 **Magnet & Torrent Integration**: Pairs with the local MoviePlay companion to stream torrent magnet links without waiting for full downloads.
+
+### 📶 [`extensions/wlman`](./extensions/wlman) — *Wireless Management Extension*
+*Direct router dashboard & bandwidth monitor right in your browser!*
+
+Puts real-time network diagnostics and router controls directly inside your browser toolbar:
+- 📊 **Live Stats**: View signal strength (RSRP/RSRQ/SINR), live upload/download bitrate, and connected devices.
+- 🛡️ **Quick Router Actions**: Supports DITO / ZTE CPE / Tozed ZLT routers with 1-click reboot, band locking, and MAC filter management.
+
+---
+
+## 📦 Packaging & Installation
+
+Each extension includes ready-to-run packaging scripts for both **Chrome (`.zip`)** and **Firefox (`.xpi`)**.
+
 ```powershell
+# Build all extensions at once into their respective dist/ folders:
 .\build-all.ps1
-```
 
-Or build an individual extension:
-```powershell
+# Or package an individual extension:
 cd extensions/translate
 .\build.ps1
 ```
 
-Built `.zip` (Chrome/Edge) and `.xpi` (Firefox) files will be output to `extensions/<name>/dist/`.
+---
 
-## Release Tags
+## 🏷️ Release Tags
 
-- Messenger Translate: `translate/vX.Y.Z`
-- MoviePlay: `movieplay/vX.Y.Z`
-- Wireless Management: `wlman/vX.Y.Z`
+Pushing version tags triggers automated GitHub release packaging:
+- `translate/vX.Y.Z` → Attaches `.zip` and `.xpi` for Messenger Translate
+- `movieplay/vX.Y.Z` → Attaches `.zip` and `.xpi` for MoviePlay
+- `wlman/vX.Y.Z` → Attaches `.zip` and `.xpi` for Wireless Management
+
+---
+
+<div align="center">
+  <sub>Maintained with love by Maru-Senpai & Nanami 💚</sub>
+</div>
