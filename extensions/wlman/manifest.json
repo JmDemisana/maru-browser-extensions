@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "WLMan Router Companion Helper",
+  "version": "1.0.0",
+  "description": "Automates 1-click Wi-Fi MAC filtering and router hardware controls for Wireless Management.",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://192.168.8.1/*",
+    "http://localhost:5173/*",
+    "http://localhost:3001/*",
+    "https://*.vercel.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://192.168.8.1/*"
+      ],
+      "js": ["api.js", "content_router.js"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "http://localhost:5173/*",
+        "https://*.vercel.app/*"
+      ],
+      "js": ["api.js", "content_applet.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "WLMan Router Companion Helper",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "wlman-extension@maruchansquigle.vercel.app",
+      "strict_min_version": "109.0"
+    }
+  }
+}

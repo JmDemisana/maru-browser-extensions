@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Messenger Translate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --surface:   #1a1d27;
+      --border:    #2c2f3e;
+      --text:      #e8eaf0;
+      --muted:     #8891aa;
+      --accent:    #5b8cff;
+      --accent-h:  #7aa3ff;
+      --green:     #3ecf8e;
+      --red:       #ff5c5c;
+      --radius:    10px;
+      --font:      'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      width: 340px;
+      min-height: 280px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand { display: flex; align-items: center; gap: 8px; }
+    .brand img { width: 22px; height: 22px; border-radius: 5px; }
+    .brand span { font-weight: 600; font-size: 14px; letter-spacing: -0.01em; }
+
+    /* Toggle */
+    .toggle-wrap { display: flex; align-items: center; gap: 7px; }
+    .toggle-label { font-size: 11.5px; color: var(--muted); }
+    .toggle {
+      position: relative;
+      width: 34px; height: 19px;
+      cursor: pointer;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0;
+      background: var(--border);
+      border-radius: 999px;
+      transition: background 0.2s;
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 13px; height: 13px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle input:checked + .slider { background: var(--accent); }
+    .toggle input:checked + .slider::before { transform: translateX(15px); }
+
+    /* ── Body ── */
+    .body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 11.5px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    select, input[type="text"], input[type="password"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:focus, input:focus { border-color: var(--accent); }
+    select { appearance: none; cursor: pointer; }
+    select option { background: #1a1d27; }
+    optgroup { color: var(--muted); font-style: normal; font-weight: 600; font-size: 11px; }
+
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+    .hint a { color: var(--accent); text-decoration: none; }
+    .hint a:hover { text-decoration: underline; }
+
+    /* ── Actions ── */
+    .actions {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 14px;
+    }
+    button {
+      flex: 1;
+      padding: 9px 12px;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    #btn-save {
+      background: var(--accent);
+      color: #fff;
+    }
+    #btn-save:hover { background: var(--accent-h); }
+    #btn-test {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    #btn-test:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Status bar ── */
+    #status {
+      margin: 0 16px 12px;
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      text-align: center;
+      display: none;
+    }
+    #status.ok  { background: rgba(62,207,142,0.12); color: var(--green); display: block; }
+    #status.err { background: rgba(255,92,92,0.12);  color: var(--red);   display: block; }
+    #status.inf { background: rgba(91,140,255,0.1);  color: var(--accent); display: block; }
+
+    /* ── Dynamic fields ── */
+    [data-show] { display: none; }
+    [data-show].visible { display: flex; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <img src="icons/icon48.png" alt="" />
+      <span>Messenger Translate</span>
+    </div>
+    <div class="toggle-wrap">
+      <span class="toggle-label" id="toggle-label">On</span>
+      <label class="toggle">
+        <input type="checkbox" id="enabled" checked />
+        <span class="slider"></span>
+      </label>
+    </div>
+  </header>
+
+  <div class="body">
+
+    <!-- Provider -->
+    <div class="field">
+      <label for="provider">Translation Provider</label>
+      <select id="provider">
+        <optgroup label="── Traditional ──">
+          <option value="mymemory">MyMemory (Free)</option>
+          <option value="deepl">DeepL</option>
+          <option value="google">Google Translate</option>
+          <option value="libretranslate">LibreTranslate</option>
+        </optgroup>
+        <optgroup label="── AI (Localized) ──">
+          <option value="openai">OpenAI GPT</option>
+          <option value="gemini">Google Gemini</option>
+          <option value="claude">Anthropic Claude</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <!-- MyMemory: email (optional) -->
+    <div class="field" data-show="mymemory">
+      <label for="myMemoryEmail">Email <span style="font-weight:400;color:#5b8cff">(optional)</span></label>
+      <input type="text" id="myMemoryEmail" placeholder="you@email.com" autocomplete="off" />
+      <p class="hint">Increases the daily limit from 1,000 to 10,000 requests.</p>
+    </div>
+
+    <!-- DeepL API key -->
+    <div class="field" data-show="deepl">
+      <label for="key-deepl">DeepL API Key</label>
+      <input type="password" id="key-deepl" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx:fx" autocomplete="off" />
+      <p class="hint">Get a free key at <a href="https://www.deepl.com/pro-api" target="_blank">deepl.com/pro-api</a>. Free keys end in <code>:fx</code>.</p>
+    </div>
+
+    <!-- Google Translate API key -->
+    <div class="field" data-show="google">
+      <label for="key-google">Google Cloud API Key</label>
+      <input type="password" id="key-google" placeholder="AIzaSy..." autocomplete="off" />
+      <p class="hint">Requires the <a href="https://console.cloud.google.com/apis/library/translate.googleapis.com" target="_blank">Cloud Translation API</a> enabled.</p>
+    </div>
+
+    <!-- LibreTranslate URL + key -->
+    <div class="field" data-show="libretranslate">
+      <label for="libreUrl">Instance URL</label>
+      <input type="text" id="libreUrl" placeholder="https://libretranslate.com" />
+    </div>
+    <div class="field" data-show="libretranslate">
+      <label for="key-libre">API Key <span style="font-weight:400;color:#5b8cff">(optional)</span></label>
+      <input type="password" id="key-libre" placeholder="Optional for public instances" autocomplete="off" />
+    </div>
+
+    <!-- OpenAI -->
+    <div class="field" data-show="openai">
+      <label for="key-openai">OpenAI API Key</label>
+      <input type="password" id="key-openai" placeholder="sk-..." autocomplete="off" />
+      <p class="hint">Get one at <a href="https://platform.openai.com/api-keys" target="_blank">platform.openai.com</a>.</p>
+    </div>
+    <div class="field" data-show="openai">
+      <label for="model-openai">Model</label>
+      <select id="model-openai">
+        <option value="gpt-4o-mini">gpt-4o-mini (fast &amp; cheap)</option>
+        <option value="gpt-4o">gpt-4o (best quality)</option>
+        <option value="gpt-4-turbo">gpt-4-turbo</option>
+        <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+      </select>
+    </div>
+
+    <!-- Gemini -->
+    <div class="field" data-show="gemini">
+      <label for="key-gemini">Gemini API Key</label>
+      <input type="password" id="key-gemini" placeholder="AIzaSy..." autocomplete="off" />
+      <p class="hint">Get one at <a href="https://aistudio.google.com/app/apikey" target="_blank">AI Studio</a>.</p>
+    </div>
+    <div class="field" data-show="gemini">
+      <label for="model-gemini">Model</label>
+      <select id="model-gemini">
+        <option value="gemini-1.5-flash">gemini-1.5-flash (fast &amp; free)</option>
+        <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+        <option value="gemini-1.5-pro">gemini-1.5-pro (best quality)</option>
+      </select>
+    </div>
+
+    <!-- Claude -->
+    <div class="field" data-show="claude">
+      <label for="key-claude">Anthropic API Key</label>
+      <input type="password" id="key-claude" placeholder="sk-ant-..." autocomplete="off" />
+      <p class="hint">Get one at <a href="https://console.anthropic.com/" target="_blank">console.anthropic.com</a>.</p>
+    </div>
+    <div class="field" data-show="claude">
+      <label for="model-claude">Model</label>
+      <select id="model-claude">
+        <option value="claude-haiku-4-5">claude-haiku-4-5 (fast &amp; cheap)</option>
+        <option value="claude-sonnet-4-5">claude-sonnet-4-5</option>
+        <option value="claude-opus-4-5">claude-opus-4-5 (best quality)</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div id="status"></div>
+
+  <div class="actions">
+    <button id="btn-test">Test</button>
+    <button id="btn-save">Save</button>
+  </div>
+
+  <script src="api.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

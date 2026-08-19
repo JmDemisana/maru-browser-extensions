@@ -1,0 +1,27 @@
+name: Release Messenger Translate Extension
+
+on:
+  push:
+    tags:
+      - 'translate/v*'
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Translate Extension
+        working-directory: extensions/translate
+        shell: pwsh
+        run: ./build.ps1
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: extensions/translate/dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
